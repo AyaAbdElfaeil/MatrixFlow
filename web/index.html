@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en" class="notranslate" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta http-equiv="Content-Language" content="en">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatrixFlow — Interactive Gaussian Elimination</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="window-shell">
+        <!-- Minimal Window Header -->
+        <header class="window-header">
+            <div class="header-left">
+                <div class="matrix-logo-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <rect x="2" y="2" width="20" height="20" rx="5" fill="#75889c"/>
+                        <circle cx="7" cy="7" r="1.5" fill="#ffffff"/>
+                        <circle cx="12" cy="7" r="1.5" fill="#ffffff"/>
+                        <circle cx="17" cy="7" r="1.5" fill="#ffffff"/>
+                        <circle cx="7" cy="12" r="1.5" fill="#ffffff"/>
+                        <circle cx="12" cy="12" r="1.5" fill="#ffffff"/>
+                        <circle cx="17" cy="12" r="1.5" fill="#ffffff"/>
+                        <circle cx="7" cy="17" r="1.5" fill="#ffffff"/>
+                        <circle cx="12" cy="17" r="1.5" fill="#ffffff"/>
+                        <circle cx="17" cy="17" r="1.5" fill="#ffffff"/>
+                    </svg>
+                </div>
+                <div class="header-titles">
+                    <h1 class="app-title">MatrixFlow</h1>
+                    <span class="app-subtitle">Interactive Gaussian Elimination</span>
+                </div>
+            </div>
+
+            <!-- Window Controls -->
+            <div class="window-controls">
+                <button class="win-btn" title="Minimize" aria-label="Minimize">
+                    <svg width="12" height="12" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <button class="win-btn" title="Maximize" aria-label="Maximize">
+                    <svg width="12" height="12" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+                </button>
+                <button class="win-btn" title="Close" aria-label="Close">
+                    <svg width="12" height="12" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Body Area -->
+        <main class="window-body">
+            <!-- Navigation Tabs (Only 3 Tabs) -->
+            <nav class="tab-navigation">
+                <button class="tab-btn active" id="tab-btn-input" data-tab="tab-input">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 20h9"/>
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                    </svg>
+                    <span>Input</span>
+                </button>
+                <button class="tab-btn" id="tab-btn-solve" data-tab="tab-solve">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                    <span>Solve</span>
+                </button>
+                <button class="tab-btn" id="tab-btn-results" data-tab="tab-results">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="20" x2="18" y2="10"/>
+                        <line x1="12" y1="20" x2="12" y2="4"/>
+                        <line x1="6" y1="20" x2="6" y2="14"/>
+                    </svg>
+                    <span>Results</span>
+                </button>
+            </nav>
+
+            <!-- Main Workspace Card (Left side) -->
+            <section class="workspace-card">
+                <!-- ==================== TAB 1: INPUT ==================== -->
+                <div id="tab-input" class="tab-pane active">
+                    <!-- Matrix Dimensions Section -->
+                    <div class="section-box dimensions-box">
+                        <div class="section-title">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="3"/>
+                                <line x1="9" y1="3" x2="9" y2="21"/>
+                                <line x1="15" y1="3" x2="15" y2="21"/>
+                                <line x1="3" y1="9" x2="21" y2="9"/>
+                                <line x1="3" y1="15" x2="21" y2="15"/>
+                            </svg>
+                            <h2>Matrix Dimensions</h2>
+                        </div>
+
+                        <div class="dimensions-toolbar">
+                            <div class="dim-inputs-group">
+                                <div class="dim-field">
+                                    <label for="input-rows">Number of Equations (n)</label>
+                                    <div class="stepper-wrap">
+                                        <input type="number" id="input-rows" min="1" max="10" value="3">
+                                        <div class="stepper-arrows">
+                                            <button type="button" class="arrow-btn" id="btn-inc-rows" title="Increase equations">&#9650;</button>
+                                            <button type="button" class="arrow-btn" id="btn-dec-rows" title="Decrease equations">&#9660;</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="dim-field">
+                                    <label for="input-vars">Number of Variables (m)</label>
+                                    <div class="stepper-wrap">
+                                        <input type="number" id="input-vars" min="1" max="10" value="3">
+                                        <div class="stepper-arrows">
+                                            <button type="button" class="arrow-btn" id="btn-inc-vars" title="Increase variables">&#9650;</button>
+                                            <button type="button" class="arrow-btn" id="btn-dec-vars" title="Decrease variables">&#9660;</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="action-buttons-group">
+                                <button type="button" class="btn-cyan" id="btn-generate-matrix">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="7" height="7"/>
+                                        <rect x="14" y="3" width="7" height="7"/>
+                                        <rect x="14" y="14" width="7" height="7"/>
+                                        <rect x="3" y="14" width="7" height="7"/>
+                                    </svg>
+                                    <span>Generate Matrix</span>
+                                </button>
+                                <button type="button" class="btn-outlined" id="btn-load-example">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14 2 14 8 20 8"/>
+                                    </svg>
+                                    <span>Load Example</span>
+                                </button>
+                                <button type="button" class="btn-peach" id="btn-reset">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M23 4v6h-6"/>
+                                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                                    </svg>
+                                    <span>Reset</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Equation Editor Section -->
+                    <div class="section-box editor-box">
+                        <div class="section-title">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 20h9"/>
+                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                            </svg>
+                            <h2>Equation Editor</h2>
+                        </div>
+
+                        <!-- Dynamic Table Grid -->
+                        <div class="editor-grid-wrapper">
+                            <table class="equation-table" id="equation-table">
+                                <thead id="table-head">
+                                    <!-- Populated dynamically: # | x₁ | x₂ | x₃ | Constant -->
+                                </thead>
+                                <tbody id="table-body">
+                                    <!-- Populated dynamically with rows of clean inputs -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Validation Message Box (Only shown when error exists) -->
+                        <div id="validation-notice" class="validation-notice hidden">
+                            <span class="notice-icon">&#9888;</span>
+                            <span id="validation-msg">Please correct the highlighted inputs.</span>
+                        </div>
+
+                        <!-- Bottom Area: Mode Selector -->
+                        <div class="editor-bottom-bar">
+                            <div class="mode-info-group">
+                                <div class="info-badge">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <line x1="12" y1="16" x2="12" y2="12"/>
+                                        <line x1="12" y1="8" x2="12.01" y2="8"/>
+                                    </svg>
+                                    <span>Current Mode</span>
+                                </div>
+                                <div class="mode-pills">
+                                    <button type="button" class="mode-pill active" id="pill-ref" data-mode="REF">REF</button>
+                                    <button type="button" class="mode-pill" id="pill-rref" data-mode="RREF">RREF</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== TAB 2: SOLVE ==================== -->
+                <div id="tab-solve" class="tab-pane">
+                    <div class="solve-header-bar">
+                        <div class="solve-meta-step">
+                            <span class="step-badge" id="lbl-step-badge">Step 0 of 0</span>
+                            <span class="op-notation" id="lbl-op-notation">Initial Matrix</span>
+                        </div>
+                        <div class="solve-mode-toggle">
+                            <span class="solve-lbl">Target:</span>
+                            <div class="mode-pills mini">
+                                <button type="button" class="mode-pill active" id="solve-pill-ref" data-mode="REF">REF</button>
+                                <button type="button" class="mode-pill" id="solve-pill-rref" data-mode="RREF">RREF</button>
+                            </div>
+                            <button type="button" class="btn-subtle" id="btn-toggle-format" title="Toggle fraction or decimal format">
+                                Format: <strong id="lbl-format-name">Fractions</strong>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Prominent Matrix Display -->
+                    <div class="solve-matrix-stage">
+                        <div class="matrix-bracketed" id="solve-matrix-display">
+                            <!-- Matrix cells rendered dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Step Explanation Box -->
+                    <div class="solve-explanation-card">
+                        <h3 class="step-title" id="lbl-step-title">Initial Augmented Matrix [A | b]</h3>
+                        <p class="step-reason" id="lbl-step-reason">Original linear system of equations.</p>
+                        <p class="step-detail" id="lbl-step-detail">Ready to begin Gaussian Elimination.</p>
+                    </div>
+
+                    <!-- Essential Controls Bar -->
+                    <div class="solve-controls-bar">
+                        <button type="button" class="btn-control" id="btn-step-prev" title="Previous Step">
+                            <span>&larr; Previous Step</span>
+                        </button>
+                        <button type="button" class="btn-control btn-play" id="btn-step-play" title="Play automatic steps">
+                            <span id="play-btn-text">&#9654; Play</span>
+                        </button>
+                        <button type="button" class="btn-control btn-cyan-control" id="btn-step-next" title="Next Step">
+                            <span>Next Step &rarr;</span>
+                        </button>
+                        <button type="button" class="btn-control btn-outlined" id="btn-step-restart" title="Restart to beginning">
+                            <span>&#8634; Restart</span>
+                        </button>
+                        <button type="button" class="btn-control btn-outlined" id="btn-step-final" title="Jump to final matrix">
+                            <span>Show Final Matrix &rarr;</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ==================== TAB 3: RESULTS ==================== -->
+                <div id="tab-results" class="tab-pane">
+                    <div class="results-container">
+                        <!-- Solution Summary Callout -->
+                        <div class="results-summary-card" id="res-card-summary">
+                            <div class="summary-icon" id="res-icon-status">&#10003;</div>
+                            <div class="summary-body">
+                                <h2 class="classification-title" id="res-class-title">System Classification</h2>
+                                <div class="solution-display" id="res-solution-text">x₁ = 2, x₂ = 3, x₃ = -1</div>
+                                <p class="classification-explanation" id="res-class-explanation">Solution explanation.</p>
+                            </div>
+                        </div>
+
+                        <!-- Parametric Form (If Infinite Solutions) -->
+                        <div id="res-parametric-box" class="parametric-card hidden">
+                            <h3>Parametric Vector Form</h3>
+                            <div id="res-parametric-lines" class="parametric-list">
+                                <!-- Parametric lines -->
+                            </div>
+                        </div>
+
+                        <!-- Final Reduced Matrix -->
+                        <div class="final-matrix-wrapper">
+                            <h3>Final Reduced Matrix [A | b]</h3>
+                            <div class="matrix-bracketed final-view" id="res-final-matrix">
+                                <!-- Final matrix rendered -->
+                            </div>
+                        </div>
+
+                        <!-- Compact Rank & Dimension Stats -->
+                        <div class="stats-row">
+                            <div class="stat-box">
+                                <span class="stat-name">Rank(A)</span>
+                                <strong class="stat-number" id="stat-rank-a">3</strong>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-name">Rank([A|b])</span>
+                                <strong class="stat-number" id="stat-rank-ab">3</strong>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-name">Variables (m)</span>
+                                <strong class="stat-number" id="stat-vars-m">3</strong>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-name">Free Variables</span>
+                                <strong class="stat-number" id="stat-free-vars">0</strong>
+                            </div>
+                        </div>
+
+                        <!-- Return & Action Buttons -->
+                        <div class="results-actions-bar">
+                            <button type="button" class="btn-outlined" id="btn-res-back-input">
+                                &larr; Back to Input
+                            </button>
+                            <button type="button" class="btn-outlined" id="btn-res-back-solve">
+                                Review Steps in Solve
+                            </button>
+                            <button type="button" class="btn-cyan" id="btn-copy-solution">
+                                Copy Solution
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bottom-Left Decorative Pastel Waves -->
+            <img src="decor_bl.png" class="decor-bottom-left" alt="" aria-hidden="true">
+
+            <!-- Bottom-Right Anime Girl & Books Cutout -->
+            <img src="anime_girl.png" class="anime-character-bottom-right" alt="Student studying with books">
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-pill" class="toast-pill hidden">Copied to clipboard!</div>
+
+    <script src="app.js"></script>
+</body>
+</html>
